@@ -1,0 +1,49 @@
+{
+  "slug": "07-build-gpt",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 7,
+  "title": "Let's build GPT: from scratch, in code, spelled out.",
+  "videoId": "kCc8FmEb1nY",
+  "videoUrl": "https://youtu.be/kCc8FmEb1nY",
+  "videoUploadDate": "2023-01-17",
+  "description": "The lecture the whole course was building toward. Build a GPT - a decoder-only Transformer, the same architecture as GPT-2 and GPT-3 - from empty files: the character pipeline, the bigram baseline, attention from its central trick outward, the block, the full assembly, the training harness. Train it on the complete works of Shakespeare until it speaks.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "build-gpt",
+      "title": "Build a GPT",
+      "summary": "Write a GPT from empty files and train it to speak. You build the character-level pipeline over a million characters of Shakespeare, resurrect Module 2's bigram as the baseline to beat, then construct attention from the inside out: the masked-softmax trick, one head with queries, keys, and values, many heads, the Transformer block with residuals and LayerNorm. After six modules of building everything by hand, torch.nn finally opens: every import is a class you already wrote. The finale trains your GPT past the bigram in minutes and samples verse with speakers and line breaks - the same architecture as GPT-3, sized for your laptop.",
+      "language": "python",
+      "estimatedMinutes": 240,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-build-gpt",
+      "learn": {
+        "outcomes": [
+          "Build the language-modeling data pipeline: character tokenizer, 90/10 split, and the batcher where every chunk packs block_size prediction problems",
+          "Rebuild the bigram model as a proper nn.Module with a generate() loop - and post the baseline your GPT must beat",
+          "Derive the trick at the heart of attention: causal averaging as one masked-softmax matrix multiply",
+          "Build a real attention head - queries, keys, values, the 1/sqrt(head_size) scaling, and the mask that makes a decoder a decoder",
+          "Compose multi-head attention and the per-token feed-forward layer, and prove with tests that communication and computation stay separate",
+          "Assemble Transformer blocks with residual connections and pre-norm LayerNorm - and know why that recipe lets GPTs go deep",
+          "Put it all together - token embeddings, position embeddings, the stack, the head - and train it with AdamW until it writes Shakespeare-shaped verse"
+        ],
+        "concepts": [
+          "Next-token prediction",
+          "Self-attention",
+          "Queries, keys, and values",
+          "Causal masking",
+          "Multi-head attention",
+          "Residual connections",
+          "LayerNorm",
+          "Positional embeddings",
+          "The Transformer block",
+          "Autoregressive generation"
+        ],
+        "prerequisites": "The course so far, especially Modules 2, 4, and 6 - the sampling loop, the init and train/eval lessons, and the container fluency all return here. This is the module where torch.nn opens up, and it lands hardest if you built the hand-rolled versions first. PyTorch is the one install; the companion notebook is optional dessert."
+      },
+      "pitch": {
+        "body": "This is the one. You write a GPT - the same decoder-only Transformer architecture as GPT-2 and GPT-3, smaller numbers - from empty files, and train it on the complete works of Shakespeare until it speaks. Attention gets built from its central trick outward: one triangular masked-softmax matrix, then a head with queries, keys, and values, then many heads, then the block with residuals and LayerNorm - each step verified by tests, including the one that matters most: the future must never leak into the past. And after six modules of building everything by hand, this is where it pays off as imports - nn.Linear is your Module 4 class, nn.Embedding is Module 6's, LayerNorm answers your BatchNorm questions, AdamW retires your hand-rolled SGD. The finale runs in three acts: the bigram posts its bar, your GPT beats it by half a nat in about five minutes on a laptop CPU, and then the model speaks - 500 characters grown from a single newline, speaker names and all.",
+        "tutorIntro": "It won't write the Transformer for you. It asks what row t of the attention matrix means, makes you explain the mask before you type it, and treats a failing causality test as the best teaching moment in the course."
+      }
+    }
+  ]
+}

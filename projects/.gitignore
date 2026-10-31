@@ -1,0 +1,7 @@
+# Reference / design research — keep local, do not commit.
+AGENT_IDE_CUSTOMIZATION.md
+ONBOARDING_FLOW.md
+
+# Project CODE lives in its own standalone GitHub repo, not the monorepo.
+# Only the catalog metadata (course.json / module.json) is tracked here.
+*/*/*/

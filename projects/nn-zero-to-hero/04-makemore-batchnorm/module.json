@@ -1,0 +1,48 @@
+{
+  "slug": "04-makemore-batchnorm",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 4,
+  "title": "Building makemore Part 3: Activations & Gradients, BatchNorm",
+  "videoId": "P6sfmUTpUmc",
+  "videoUrl": "https://youtu.be/P6sfmUTpUmc",
+  "videoUploadDate": "2022-10-04",
+  "description": "Open the black box. Your Module 3 MLP trained - but it started at loss 27 when 'no idea' scores 3.3, and most of its tanh layer arrived dead. Diagnose both, fix the init down to Kaiming's formula, build BatchNorm from scratch, then rebuild the whole network as your own mini torch.nn with the telemetry professionals watch: activation histograms, gradient stats, update-to-data ratios.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "activations-and-batchnorm",
+      "title": "Fix your init & build BatchNorm",
+      "summary": "Start from your Module 3 network and learn why training breaks: diagnose the confidently-wrong init (loss 27 vs the honest 3.3), revive a saturated tanh layer, derive Kaiming init instead of pasting it, and build BatchNorm by hand - batch stats, gain and bias, running statistics. Then package it all as your own torch.nn - Linear, BatchNorm1d, Tanh - stack six layers, and train 47,024 parameters with a real diagnostic dashboard.",
+      "language": "python",
+      "estimatedMinutes": 120,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-makemore-batchnorm",
+      "learn": {
+        "outcomes": [
+          "Diagnose why Module 3's first loss was ~27 when an unsure network scores -log(1/27) = 3.3 - and fix it with two scale changes",
+          "Measure tanh saturation, map your first dead neurons, and bring the hidden layer back to life",
+          "Replace eyeballed init factors with Kaiming's formula - gain / sqrt(fan_in) - and know where the 5/3 comes from",
+          "Build BatchNorm's forward pass by hand: center, scale, then let the network undo it with trainable gain and bias",
+          "Keep running statistics so a batch of ONE works - the exact reason model.train() / model.eval() exist",
+          "Write your own torch.nn - Linear, BatchNorm1d, Tanh classes - and stack them into a 6-layer, 47,024-parameter network",
+          "Read training telemetry like a professional: per-layer activation histograms, gradient stats, and the update-to-data ratio's -3 line"
+        ],
+        "concepts": [
+          "Initialization",
+          "Tanh saturation",
+          "Dead neurons",
+          "Vanishing gradients",
+          "Kaiming init",
+          "BatchNorm",
+          "Running statistics",
+          "Train/eval modes",
+          "Training diagnostics"
+        ],
+        "prerequisites": "Do Module 3 (the MLP) first - this project starts from that exact network (its naive init ships as the 'before' picture) and its finale beats your own 2.2564. PyTorch is the one install; the companion Jupyter notebook is optional everywhere else but earns its keep here - this module is about seeing."
+      },
+      "pitch": {
+        "body": "Your Module 3 MLP worked - and it was quietly sick. It opened training at loss 27 when a network with no idea should score 3.3, burned thousands of steps un-learning its own confident garbage, and most of a tanh layer arrived dead - the loss curve never told you any of it. This project teaches you to notice: you fix the init down to Kaiming's actual formula, build BatchNorm from scratch including the running statistics that make single-example inference possible, and rebuild everything as your own mini torch.nn - six layers, 47,024 parameters - instrumented with the plots professionals actually watch. The finale prints a first loss of 3.3, ends past your Module 3 number, and hands you a diagnostic dashboard for every network you'll ever train.",
+        "tutorIntro": "It won't fix the network for you. It asks the question that cracks the case - what should an untrained network score? - then runs the tests to check. And it knows where this lecture bites: the confidently-wrong logits, the batch coupling, the forgotten .eval()."
+      }
+    }
+  ]
+}

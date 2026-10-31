@@ -1,0 +1,90 @@
+services:
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - ./webroot:/var/www/certbot
+      - ./config:/app/config:ro           # Mount config directory (read-only)
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-staging}
+    networks:
+      - app-network
+    depends_on:
+      - web-app
+      - llm-app
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - ./webroot:/var/www/certbot
+    entrypoint: >
+      sh -c "trap exit TERM; while :; do 
+        certbot renew --webroot -w /var/www/certbot --quiet;
+        sleep 12h & wait $${!}; 
+      done;"
+
+  llm-app:
+    build:
+      context: ./llm-app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - path: ./llm-app/.env
+        required: true
+    volumes:
+      - ./data:/data:ro
+      - llm-app-data:/llm-app/.data
+    environment:
+      COURSE_DATA_PATH: /data/courses
+      HISTORY_DB_PATH: /llm-app/.data/tutor_history.sqlite3
+      MEMORY_DB_PATH: /llm-app/.data/tutor_memory.sqlite3
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app-network
+
+  web-app:
+    build:
+      context: .
+      dockerfile: web-app/Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://staging.onlearn.app}
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
+        NEXT_PUBLIC_CLERK_SIGN_IN_URL: ${NEXT_PUBLIC_CLERK_SIGN_IN_URL:-/sign-in}
+        NEXT_PUBLIC_CLERK_SIGN_UP_URL: ${NEXT_PUBLIC_CLERK_SIGN_UP_URL:-/sign-up}
+        NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL:-/}
+        NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL:-/onboarding}
+        NEXT_PUBLIC_DODO_MONTHLY_PRODUCT_ID: ${NEXT_PUBLIC_DODO_MONTHLY_PRODUCT_ID:-}
+        NEXT_PUBLIC_DODO_ANNUAL_PRODUCT_ID: ${NEXT_PUBLIC_DODO_ANNUAL_PRODUCT_ID:-}
+    restart: unless-stopped
+    env_file:
+      - path: ./web-app/.env.${ENVIRONMENT:-staging}
+        required: true
+    volumes:
+      - ./data:/app/data:ro
+      - ./projects:/app/projects:ro
+    environment:
+      LLM_APP_URL: http://llm-app:8000
+      NODE_OPTIONS: "--dns-result-order=ipv4first"
+    depends_on:
+      llm-app:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  certbot-etc:
+  llm-app-data:

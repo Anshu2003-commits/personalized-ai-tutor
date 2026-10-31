@@ -1,0 +1,50 @@
+{
+  "slug": "09-reproduce-gpt2",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 9,
+  "title": "Let's reproduce GPT-2 (124M)",
+  "videoId": "l8pRSuU81PU",
+  "videoUrl": "https://youtu.be/l8pRSuU81PU",
+  "videoUploadDate": "2024-06-09",
+  "description": "The bonus module. Rewrite your Module 7 GPT the way OpenAI shipped it - fused attention, tanh GELU, weight tying, their exact init - then load OpenAI's actual 124M checkpoint into your own class and hear the real GPT-2 speak through your code. Build the GPT-3-grade training loop and the HellaSwag eval around it, and finish by fine-tuning the real weights on Shakespeare.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "reproduce-gpt2",
+      "title": "Reproduce GPT-2",
+      "summary": "The course built you a GPT; this module hands you the real one. You rewrite the architecture to OpenAI's spec - all twelve heads fused into one matmul, the tanh-approximated GELU frozen into the weights, input embedding and output head tied into a single matrix (that's the famous 124,439,808) - then download OpenAI's actual checkpoint and load it tensor by tensor into your class, transposing the four matrices their 2019 code stored sideways. Greedy decoding answers 'Hello, I'm a language model,' with ' not a programming language. I'm a language model.' - the real GPT-2, running through your lines. Then the machinery around a real model: warmup-cosine schedule, weight-decay groups, gradient accumulation, and the HellaSwag eval - proven by fine-tuning the real weights on Module 7's Shakespeare until they speak verse.",
+      "language": "python",
+      "estimatedMinutes": 240,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-reproduce-gpt2",
+      "learn": {
+        "outcomes": [
+          "Fuse Module 7's ModuleList of heads into GPT-2's batched attention: one c_attn matmul, one reshape, twelve conversations at once",
+          "Rebuild the block to OpenAI's spec - tanh-approximated GELU, checkpoint-exact names - and learn why reproducing a model means reproducing its approximations",
+          "Assemble the 124M with weight tying and land the famous parameter count exactly: 124,439,808",
+          "Implement OpenAI's init, including the 1/sqrt(2*n_layer) shrink on every projection that feeds the residual stream",
+          "Load the real checkpoint with state-dict surgery: flat-to-prefixed key mapping, four Conv1D transposes per block, and the '.attn.bias' skip that almost got us too",
+          "Build a real sampler - temperature and top-k - and verify it against GPT-2's actual most-confident continuation",
+          "Write the GPT-3-grade training loop: warmup-cosine schedule, decay/no-decay parameter groups, gradient accumulation, and clipping",
+          "Demystify evals by implementing HellaSwag scoring: four endings, four surprises, argmin"
+        ],
+        "concepts": [
+          "Fused multi-head attention",
+          "Weight tying",
+          "GELU and frozen approximations",
+          "Residual-stream init scaling",
+          "State-dict surgery",
+          "Checkpoint fingerprinting",
+          "Temperature and top-k sampling",
+          "Warmup-cosine schedules",
+          "Gradient accumulation",
+          "LM-based eval scoring"
+        ],
+        "prerequisites": "Module 7 is the ideal launchpad - this is that architecture, professionally dressed - and Module 8 explains the tokenizer you'll call through tiktoken. Four installs (torch, tiktoken, huggingface_hub, safetensors) plus a one-time ~548 MB checkpoint download before Milestone 5. Every milestone runs on CPU; a GPU makes the fine-tune finale faster. The companion notebook is optional dessert."
+      },
+      "pitch": {
+        "body": "There is a moment in this module you will not forget: you type a prompt into a model whose every line you wrote, and OpenAI's actual GPT-2 answers - 'Hello, I'm a language model,' ... ' not a programming language. I'm a language model.' Getting there is the education. The architecture you built in Module 7 gets rewritten the way OpenAI shipped it: heads fused into single matmuls, the tanh GELU that got frozen into the weights in 2018, the input embedding and output head revealed to be one tied matrix - which is why the parameter count lands on exactly 124,439,808, and why the checkpoint on disk has no output head at all. Then the resurrection: you walk OpenAI's safetensors file tensor by tensor into your own state dict, transposing the four matrices per block their old Conv1D code stored sideways, past a skip-filter gotcha so treacherous the tests tell the story of how it bit the people who built this module. With the real weights alive in your code, you build what surrounds a real model - the warmup-cosine schedule, the weight-decay split (exactly 50 decayed tensors, 98 spared), gradient accumulation, and the HellaSwag eval where your 124M scores ~32% against 25% guessing. The finale runs your training loop on the real weights over Module 7's Shakespeare - about ninety seconds on a laptop GPU - and the same model that spoke English speaks verse. The lecture's full $10, 8-GPU pretraining reproduction is documented as the door left open: everything you built is that run, minus the electricity.",
+        "tutorIntro": "It won't do the surgery for you. It asks where the twelve heads went before you fuse them, makes you predict the parameter count before tying, and when the fingerprint test catches your loader, it tells you the story of the bias-eating bug - then lets you find yours."
+      }
+    }
+  ]
+}

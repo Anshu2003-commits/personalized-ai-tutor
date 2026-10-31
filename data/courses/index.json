@@ -1,0 +1,24 @@
+{
+  "courses": [
+    {
+      "id": "dsa",
+      "name": "Data Structures & Algorithms",
+      "description": "Master DSA from fundamentals to advanced topics",
+      "icon": "🔢",
+      "difficulty": "beginner-to-advanced",
+      "isActive": true,
+      "totalQuestions": 439,
+      "estimatedHours": 300
+    },
+    {
+      "id": "ds",
+      "name": "Data Science & ML",
+      "description": "Master Data Science from linear algebra to machine learning",
+      "icon": "🧪",
+      "difficulty": "beginner-to-advanced",
+      "isActive": true,
+      "totalQuestions": 12,
+      "estimatedHours": 680
+    }
+  ]
+}

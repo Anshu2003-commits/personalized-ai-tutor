@@ -1,0 +1,89 @@
+# IDEs & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# App-local generated state
+/web-app/node_modules/
+/web-app/.next/
+/web-app/out/
+/legacy/web-app/node_modules/
+/legacy/web-app/.next/
+/legacy/web-app/out/
+/llm-app/.data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+
+# Legacy backend local state
+/legacy/llm-app/.venv/
+/legacy/llm-app/.venv-dev/
+/legacy/llm-app/test_venv/
+/legacy/llm-app/.pytest_cache/
+/legacy/llm-app/**/__pycache__/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+/web-app/.env.local
+/web-app/.env.staging
+/web-app/.env.production
+/web-app/.env.asxix
+/llm-app/.env
+# NOTE: legacy/llm-app/.env.<env> files are intentionally tracked — they are baked into
+# Docker images at build time for deployment. Kept by owner decision until
+# pre-deployment hardening (see SECURITY_REMEDIATION.md). Do not add a rule that
+# ignores them.
+legacy/llm-app/secrets/
+
+# Application Specific
+legacy/llm-app/app/supervisor/practice
+*.txt
+onlearn_conversations_artifacts.md
+admin_dashboard_walkthrough.md
+Claude.md
+.claude/
+
+# Dev scratch / generated analysis output (not product code)
+legacy/llm-app/replay_results*.json
+legacy/llm-app/raw_mongo_traces.json
+legacy/llm-app/test_gemini_models.py
+
+# Local-only: reference material, vendored/sibling repos, design refs, scratch.
+# Moved off the repo root into _external/ to keep the workspace clean.
+/_external/
+
+# Machine-local state (not product code)
+/nginx/conf.d/
+/.local/
+
+# -------------------------------------------------------------
+# Internal / Sensitive Infrastructure & Notes (Do Not Publicize)
+# -------------------------------------------------------------
+DEPLOYMENT.md
+SECURITY_REMEDIATION.md
+AGENTS.md
+CLEANUP_AUDIT.md
+scripts/gcp-staging-startup.sh
+legacy/
+

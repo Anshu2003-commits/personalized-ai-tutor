@@ -1,0 +1,79 @@
+{
+  "slug": "02-makemore-intro",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 2,
+  "title": "Building makemore: bigrams",
+  "videoId": "PaCmpygFfXo",
+  "videoUrl": "https://youtu.be/PaCmpygFfXo",
+  "videoUploadDate": "2022-09-07",
+  "description": "Build your first language model: a character-level bigram model that reads 32,033 real names and invents new ones. First by counting, then as a neural network trained by gradient descent that converges to the same answer. Two guided projects: the counting model, then the neural version.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "bigram-model",
+      "title": "Build the bigram language model",
+      "summary": "Build a language model that invents new names: count every letter pair in 32,033 real names into a 27x27 tensor, normalize the counts into probabilities, sample brand-new names from them, and score the model with negative log-likelihood. No calculus, no neural nets - the gentlest project in the course.",
+      "language": "python",
+      "estimatedMinutes": 60,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-bigram-model",
+      "learn": {
+        "outcomes": [
+          "Load a real dataset of 32,033 names and build a character vocabulary with a start/end token",
+          "Count all 228,146 bigrams into a 27x27 tensor - your first language model is a table",
+          "Normalize counts into probabilities and survive the keepdim broadcasting trap on purpose",
+          "Sample new names from the model with torch.multinomial",
+          "Score the model with average negative log-likelihood and learn why 2.454 is the number to beat"
+        ],
+        "concepts": [
+          "Language modeling",
+          "Bigrams",
+          "Probability distributions",
+          "PyTorch tensors",
+          "Broadcasting",
+          "Sampling",
+          "Negative log-likelihood",
+          "Smoothing"
+        ],
+        "prerequisites": "Comfortable with Python loops and dicts. No calculus and no neural networks - this is the gentlest project in the course. PyTorch is the one install, and it's taught from zero."
+      },
+      "pitch": {
+        "body": "A working language model - the same idea as GPT, shrunk to its simplest possible form. It reads 32,033 real names, learns which letter follows which, and invents new ones: ka, teda, moliellavo. You build every piece: the counts, the probabilities, the sampler, the loss.",
+        "tutorIntro": "It won't hand you the answer. It asks the one question that makes the next line obvious, then checks your work by running the tests."
+      }
+    },
+    {
+      "order": 2,
+      "slug": "neural-bigram",
+      "title": "Train a neural bigram model",
+      "summary": "Rebuild the bigram model as a neural network: one-hot inputs, a single 27x27 weight matrix, softmax written by hand, and a gradient-descent loop that converges to the same 2.45 loss the counting model achieved. The network learns what counting knew.",
+      "language": "python",
+      "estimatedMinutes": 75,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-neural-bigram",
+      "learn": {
+        "outcomes": [
+          "Turn 228,146 bigrams into a supervised training set of (input, target) pairs",
+          "One-hot encode characters and see why integers can't feed a neural net",
+          "Write softmax by hand: logits to counts to probabilities, differentiable end to end",
+          "Implement negative log-likelihood loss plus regularization - and see it's the counting model's smoothing in disguise",
+          "Train with gradient descent until the network rediscovers the counting model's 2.45 loss",
+          "Sample names from the trained network and watch it invent the same names as the counting model"
+        ],
+        "concepts": [
+          "Neural networks",
+          "One-hot encoding",
+          "Logits",
+          "Softmax",
+          "Negative log-likelihood",
+          "Gradient descent",
+          "Regularization",
+          "PyTorch autograd"
+        ],
+        "prerequisites": "Do 'Build the bigram language model' first - this rebuilds that exact model, and the punchline lands harder if you built the original. Module 1 (micrograd) deepens the backprop intuition but isn't required; PyTorch runs the backward pass here."
+      },
+      "pitch": {
+        "body": "The same language model, learned instead of counted. Build a one-layer network, write softmax yourself, and train it with gradient descent until it converges to the loss your counting model already achieved - proof the network discovers the same knowledge. This exact framing - logits, softmax, NLL, backprop - is what scales to GPT.",
+        "tutorIntro": "It won't write the loop for you. It asks the question that makes the next line obvious, then runs the tests to check."
+      }
+    }
+  ]
+}

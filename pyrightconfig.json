@@ -1,0 +1,13 @@
+{
+  "include": ["llm-app"],
+  "exclude": ["**/__pycache__", "**/.venv", "legacy", "_external"],
+  "venvPath": "llm-app",
+  "venv": ".venv",
+  "executionEnvironments": [
+    {
+      "root": "llm-app",
+      "extraPaths": ["llm-app"]
+    }
+  ],
+  "typeCheckingMode": "basic"
+}

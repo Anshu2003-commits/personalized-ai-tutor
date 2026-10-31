@@ -1,0 +1,81 @@
+{
+  "slug": "nn-zero-to-hero",
+  "title": "Neural Networks: Zero to Hero",
+  "author": "Andrej Karpathy",
+  "source": "https://karpathy.ai/zero-to-hero.html",
+  "description": "A hands-on course that builds neural networks from scratch, one video at a time, from a tiny automatic-differentiation engine up to a GPT. Each module is one lecture; each module has one or more guided coding projects you complete locally in Claude Code with an AI tutor.",
+  "modules": [
+    {
+      "order": 1,
+      "slug": "01-micrograd",
+      "title": "The spelled-out intro to neural networks and backpropagation: building micrograd",
+      "videoId": "VMj-3S1tku0",
+      "videoUrl": "https://youtu.be/VMj-3S1tku0",
+      "hasContent": true
+    },
+    {
+      "order": 2,
+      "slug": "02-makemore-intro",
+      "title": "The spelled-out intro to language modeling: building makemore",
+      "videoId": "PaCmpygFfXo",
+      "videoUrl": "https://youtu.be/PaCmpygFfXo",
+      "hasContent": true
+    },
+    {
+      "order": 3,
+      "slug": "03-makemore-mlp",
+      "title": "Building makemore Part 2: MLP",
+      "videoId": "TCH_1BHY58I",
+      "videoUrl": "https://youtu.be/TCH_1BHY58I",
+      "hasContent": true
+    },
+    {
+      "order": 4,
+      "slug": "04-makemore-batchnorm",
+      "title": "Building makemore Part 3: Activations & Gradients, BatchNorm",
+      "videoId": "P6sfmUTpUmc",
+      "videoUrl": "https://youtu.be/P6sfmUTpUmc",
+      "hasContent": true
+    },
+    {
+      "order": 5,
+      "slug": "05-makemore-backprop-ninja",
+      "title": "Building makemore Part 4: Becoming a Backprop Ninja",
+      "videoId": "q8SA3rM6ckI",
+      "videoUrl": "https://youtu.be/q8SA3rM6ckI",
+      "hasContent": true
+    },
+    {
+      "order": 6,
+      "slug": "06-makemore-wavenet",
+      "title": "Building makemore Part 5: Building a WaveNet",
+      "videoId": "t3YJ5hKiMQ0",
+      "videoUrl": "https://youtu.be/t3YJ5hKiMQ0",
+      "hasContent": true
+    },
+    {
+      "order": 7,
+      "slug": "07-build-gpt",
+      "title": "Let's build GPT: from scratch, in code, spelled out.",
+      "videoId": "kCc8FmEb1nY",
+      "videoUrl": "https://youtu.be/kCc8FmEb1nY",
+      "hasContent": true
+    },
+    {
+      "order": 8,
+      "slug": "08-gpt-tokenizer",
+      "title": "Let's build the GPT Tokenizer",
+      "videoId": "zduSFxRajkE",
+      "videoUrl": "https://youtu.be/zduSFxRajkE",
+      "hasContent": true
+    },
+    {
+      "order": 9,
+      "slug": "09-reproduce-gpt2",
+      "title": "Let's reproduce GPT-2 (124M)",
+      "videoId": "l8pRSuU81PU",
+      "videoUrl": "https://youtu.be/l8pRSuU81PU",
+      "hasContent": true
+    }
+  ]
+}

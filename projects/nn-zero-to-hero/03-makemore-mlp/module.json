@@ -1,0 +1,48 @@
+{
+  "slug": "03-makemore-mlp",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 3,
+  "title": "Building makemore Part 2: MLP",
+  "videoId": "TCH_1BHY58I",
+  "videoUrl": "https://youtu.be/TCH_1BHY58I",
+  "videoUploadDate": "2022-09-12",
+  "description": "Break through the bigram's wall. Build the neural language model from Bengio et al. 2003 - a 3-character context window, an embedding table, a tanh hidden layer - plus the training craft that makes deep learning work: minibatches, train/dev/test splits, and learning-rate tuning. One guided project whose finale is a dev loss that finally beats 2.454.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "mlp-language-model",
+      "title": "Build an MLP language model",
+      "summary": "Build the Bengio et al. 2003 neural language model: three characters of context, an embedding table that gives every character learned coordinates, and a tanh hidden layer. Then learn the training craft - minibatches, an honest train/dev/test split, learning-rate tuning - and train it until it beats the bigram's 2.454. The architecture you build is GPT's skeleton.",
+      "language": "python",
+      "estimatedMinutes": 120,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-makemore-mlp",
+      "learn": {
+        "outcomes": [
+          "Slide a 3-character context window over 32,033 names - same 228,146 examples as the bigram, three times the history",
+          "Embed characters with a lookup table and see why C[X] plus .view() is the whole trick",
+          "Build a real hidden layer - tanh(emb @ W1 + b1) - and a forward pass that stops at logits",
+          "Swap your hand-written softmax loss for F.cross_entropy and know exactly why it's safer",
+          "Train on minibatches and read a noisy loss curve without panicking",
+          "Split train/dev/test and evaluate honestly - loss on held-out data is the only number that counts",
+          "Beat the bigram: push the dev loss under 2.3 and sample names that finally sound like names - makilah, kaley, dakstin"
+        ],
+        "concepts": [
+          "Embeddings",
+          "Hidden layers",
+          "MLPs",
+          "Cross-entropy loss",
+          "Minibatch SGD",
+          "Train/dev/test splits",
+          "Overfitting",
+          "Learning-rate tuning",
+          "Tensor internals"
+        ],
+        "prerequisites": "Do Module 2 (the bigram projects) first - this project exists to beat that model, and it reuses machinery you built there: the '.' token, average NLL, multinomial sampling. PyTorch is the one install; a companion Jupyter notebook is included but optional."
+      },
+      "pitch": {
+        "body": "The bigram hit a wall: one character of context, loss stuck at 2.454, and no cheap way to widen a counting table. This project breaks through it with the model from Bengio et al. 2003 - embeddings that give every character learned coordinates, a tanh hidden layer, minibatch training, and an honest train/dev/test split. The finale is a number: your dev loss beats 2.454. And the architecture you built - embed, hidden, logits, cross-entropy - is GPT's skeleton. A companion notebook draws the payoff: the learning-rate sweep, and the embedding map where the vowels cluster on their own.",
+        "tutorIntro": "It won't build the network for you. It asks the question that makes the next line obvious, then runs the tests to check - and it knows where this lecture bites: the .view() trick, the noisy loss curve, the loss that starts at 26."
+      }
+    }
+  ]
+}

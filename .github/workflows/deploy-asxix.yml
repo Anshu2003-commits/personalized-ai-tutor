@@ -1,0 +1,175 @@
+name: Deploy Asxix Preview
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-asxix
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web-app/package-lock.json
+
+      - name: Install web dependencies
+        working-directory: web-app
+        run: npm ci
+
+      - name: Lint web app
+        working-directory: web-app
+        run: npm run lint
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Verify code runner source assets
+        working-directory: web-app
+        run: |
+          npm run verify:python-source
+          npm run verify:boilerplate
+
+      - name: Install LLM dependencies
+        run: python -m pip install -e ./llm-app
+
+      - name: Test LLM app
+        env:
+          PYTHONPATH: llm-app
+        run: python -m unittest discover -s llm-app/tests
+
+  deploy:
+    needs: checks
+    runs-on: ubuntu-latest
+    environment: asxix
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.ASXIX_SSH_KEY }}
+
+      - name: Validate secrets
+        env:
+          ASXIX_SSH_HOST: ${{ secrets.ASXIX_SSH_HOST }}
+          ASXIX_SSH_USER: ${{ secrets.ASXIX_SSH_USER }}
+          WEB_APP_ENV_STAGING_B64: ${{ secrets.WEB_APP_ENV_STAGING_B64 }}
+          LLM_APP_ENV_B64: ${{ secrets.LLM_APP_ENV_B64 }}
+        run: |
+          test -n "$ASXIX_SSH_HOST"
+          test -n "$ASXIX_SSH_USER"
+          test -n "$WEB_APP_ENV_STAGING_B64"
+          test -n "$LLM_APP_ENV_B64"
+
+      - name: Write isolated preview env files
+        env:
+          WEB_APP_ENV_STAGING_B64: ${{ secrets.WEB_APP_ENV_STAGING_B64 }}
+          LLM_APP_ENV_B64: ${{ secrets.LLM_APP_ENV_B64 }}
+        run: |
+          printf '%s' "$WEB_APP_ENV_STAGING_B64" | base64 --decode > web-app/.env.asxix
+          printf '%s' "$LLM_APP_ENV_B64" | base64 --decode > llm-app/.env
+          {
+            grep -vE '^(NEXT_PUBLIC_SITE_URL|SITE_URL|DODO_PAYMENTS_RETURN_URL)=' web-app/.env.asxix || true
+            printf '\nNEXT_PUBLIC_SITE_URL=https://onlearn.asxix.xyz\n'
+            printf 'SITE_URL=https://onlearn.asxix.xyz\n'
+            printf 'DODO_PAYMENTS_RETURN_URL=https://onlearn.asxix.xyz/upgrade/success\n'
+          } > web-app/.env.asxix.tmp
+          mv web-app/.env.asxix.tmp web-app/.env.asxix
+
+      - name: Build deployment images
+        run: |
+          set -a
+          . web-app/.env.asxix
+          set +a
+          docker build \
+            --file web-app/Dockerfile \
+            --build-arg NEXT_PUBLIC_SITE_URL \
+            --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY \
+            --build-arg NEXT_PUBLIC_CLERK_SIGN_IN_URL \
+            --build-arg NEXT_PUBLIC_CLERK_SIGN_UP_URL \
+            --build-arg NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL \
+            --build-arg NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL \
+            --build-arg NEXT_PUBLIC_DODO_MONTHLY_PRODUCT_ID \
+            --build-arg NEXT_PUBLIC_DODO_ANNUAL_PRODUCT_ID \
+            --tag onlearn-asxix-web-app:latest \
+            .
+          docker build \
+            --file llm-app/Dockerfile \
+            --tag onlearn-asxix-llm-app:latest \
+            llm-app
+          docker save \
+            onlearn-asxix-web-app:latest \
+            onlearn-asxix-llm-app:latest \
+            | gzip -1 > /tmp/onlearn-asxix-images.tar.gz
+
+      - name: Add host key
+        env:
+          ASXIX_SSH_HOST: ${{ secrets.ASXIX_SSH_HOST }}
+          ASXIX_SSH_PORT: ${{ secrets.ASXIX_SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${ASXIX_SSH_PORT:-22}" -H "$ASXIX_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync runtime files
+        env:
+          ASXIX_SSH_HOST: ${{ secrets.ASXIX_SSH_HOST }}
+          ASXIX_SSH_USER: ${{ secrets.ASXIX_SSH_USER }}
+          ASXIX_SSH_PORT: ${{ secrets.ASXIX_SSH_PORT }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -p ${ASXIX_SSH_PORT:-22}" \
+            --exclude='.git/' \
+            --exclude='.local/' \
+            --exclude='_external/' \
+            --exclude='legacy/' \
+            --exclude='agent/' \
+            --exclude='**/node_modules/' \
+            --exclude='**/.next/' \
+            --exclude='**/.venv/' \
+            --exclude='llm-app/.data/' \
+            --exclude='nginx/conf.d/' \
+            --exclude='web-app/.env.local' \
+            --exclude='web-app/.env.staging' \
+            --exclude='web-app/.env.production' \
+            ./ "$ASXIX_SSH_USER@$ASXIX_SSH_HOST:~/onlearn-monorepo/"
+
+      - name: Deploy
+        env:
+          ASXIX_SSH_HOST: ${{ secrets.ASXIX_SSH_HOST }}
+          ASXIX_SSH_USER: ${{ secrets.ASXIX_SSH_USER }}
+          ASXIX_SSH_PORT: ${{ secrets.ASXIX_SSH_PORT }}
+        run: |
+          gzip -dc /tmp/onlearn-asxix-images.tar.gz | \
+            ssh -p "${ASXIX_SSH_PORT:-22}" "$ASXIX_SSH_USER@$ASXIX_SSH_HOST" \
+              'docker load'
+          ssh -p "${ASXIX_SSH_PORT:-22}" "$ASXIX_SSH_USER@$ASXIX_SSH_HOST" '
+            set -e
+            cd ~/onlearn-monorepo
+            docker compose -f docker-compose.asxix.yml up -d --remove-orphans --no-build
+            sudo install -m 0644 nginx/onlearn.asxix.xyz.conf /etc/nginx/sites-available/onlearn.asxix.xyz
+            sudo ln -sfn /etc/nginx/sites-available/onlearn.asxix.xyz /etc/nginx/sites-enabled/onlearn.asxix.xyz
+            sudo nginx -t
+            sudo systemctl reload nginx
+            curl --fail --retry 12 --retry-delay 5 --retry-all-errors http://127.0.0.1:8000/health
+            curl --fail --retry 12 --retry-delay 5 --retry-all-errors --head http://127.0.0.1:3000/
+            docker image rm onlearn-asxix-web-app:recovery onlearn-asxix-llm-app:recovery 2>/dev/null || true
+            docker image prune -f
+            docker compose -f docker-compose.asxix.yml ps
+          '

@@ -1,0 +1,49 @@
+{
+  "slug": "08-gpt-tokenizer",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 8,
+  "title": "Let's build the GPT Tokenizer",
+  "videoId": "zduSFxRajkE",
+  "videoUrl": "https://youtu.be/zduSFxRajkE",
+  "videoUploadDate": "2024-02-20",
+  "description": "The final module - and the one that explains the folklore. Build byte-pair encoding, the exact algorithm GPT-4 reads with, in pure Python: bytes as the universal alphabet, the count-and-merge loop that mints tokens from frequency alone, GPT-4's regex guardrails, and the special tokens that carry a chat product's control plane. Train it on Shakespeare and read the vocabulary it invents.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "gpt-tokenizer",
+      "title": "Build the GPT Tokenizer",
+      "summary": "Write the tokenizer that feeds every GPT - from empty files, in pure Python, no PyTorch. You start from the honest raw material (text as UTF-8 bytes, where one emoji costs four), build the two primitives of byte-pair encoding - count the most frequent neighboring pair, mint a new token for it - then wrap them into a trainable tokenizer whose encode and decode round-trip perfectly. Then the guardrails real GPTs add: GPT-4's own regex split pattern (provided verbatim from tiktoken) so a word never absorbs the punctuation after it, and special tokens like <|endoftext|> that ride outside the algorithm entirely. The finale trains a 512-token vocabulary on the same Shakespeare your GPT learned from, and the longest tokens it mints are CORIOLANUS and GLOUCESTER - whole names nobody told it about.",
+      "language": "python",
+      "estimatedMinutes": 150,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-gpt-tokenizer",
+      "learn": {
+        "outcomes": [
+          "Work in the tokenizer's true unit: UTF-8 bytes, where 256 values spell every language and decode must never crash on a cut character",
+          "Build the two primitives of BPE - pair counting with one zip idiom, and the merge that mints a new token without double-consuming overlaps",
+          "Write the training loop that turned terabytes into GPT-4's vocabulary: count, merge the most frequent pair, repeat - and watch it rediscover English",
+          "Implement encode and decode as a lossless codec, applying merges in mint order - and prove round trips survive emoji the training never saw",
+          "Add GPT-4's regex guardrails (the real cl100k pattern from tiktoken) so merges never cross a word/punctuation/number boundary",
+          "Handle special tokens as protocol, not language - one id by decree, unforgeable from ordinary user text",
+          "Measure what tokenizers live and die by: compression ratio on text the tokenizer trained on and text it never saw"
+        ],
+        "concepts": [
+          "UTF-8 and code points",
+          "Byte-pair encoding",
+          "Pair statistics",
+          "The merge operation",
+          "Vocabulary minting",
+          "Mint-order encoding",
+          "Regex pre-splitting",
+          "Special tokens",
+          "Compression ratio",
+          "Why LLMs can't spell"
+        ],
+        "prerequisites": "The lecture is deliberately standalone - this is the one module of the course a newcomer can start at, and the only one with no PyTorch. Module 2 (the 65-character tokenizer this replaces) and Module 7 (the GPT this would feed) make the callbacks land. One install: pip install regex - GPT-4's split pattern needs it; the companion notebook is optional dessert."
+      },
+      "pitch": {
+        "body": "Why can't LLMs spell? Why does non-English text cost triple? Why does a trailing space derail a completion? Every answer is the tokenizer, and in the course's final module you build it - the exact byte-pair-encoding algorithm GPT-4 reads with, in pure Python, dicts and lists all the way down. You start where the machine starts: text as UTF-8 bytes. Then the loop that made every modern vocabulary: count the neighboring pairs, merge the most frequent, mint token 256, 257, 258... Your encode and decode become a lossless codec, GPT-4's own regex pattern (shipped verbatim from tiktoken) adds the guardrails, and special tokens get handled the way a chat product's control plane demands - unforgeable from user text. The finale runs in three acts: raw bytes post their 1.00 ratio as the bar, your tokenizer trains on a quarter million characters of Shakespeare in about a minute, and then you read the vocabulary it invented - the longest tokens are CORIOLANUS and GLOUCESTER, whole names discovered by frequency alone. Last act of the course: 'strawberry' collapses into seven opaque ids, and the spelling mystery you started with is a mystery no more.",
+        "tutorIntro": "It won't write the merge loop for you. It makes you run BPE on a napkin before you code it, asks why [1,1,1] must become [4,1] and not [4,4], and treats your first emoji round-trip failure as the best lesson in the module."
+      }
+    }
+  ]
+}

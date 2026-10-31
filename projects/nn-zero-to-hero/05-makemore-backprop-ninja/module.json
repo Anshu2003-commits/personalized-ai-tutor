@@ -1,0 +1,48 @@
+{
+  "slug": "05-makemore-backprop-ninja",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 5,
+  "title": "Building makemore Part 4: Becoming a Backprop Ninja",
+  "videoId": "q8SA3rM6ckI",
+  "videoUrl": "https://youtu.be/q8SA3rM6ckI",
+  "videoUploadDate": "2022-10-11",
+  "description": "Unplug loss.backward(). Backpropagate through the entire MLP-with-BatchNorm by hand - cross-entropy, linear layers, tanh, BatchNorm's full anatomy, the embedding lookup - twenty-six gradients checked against autograd one by one. Then collapse cross-entropy and BatchNorm each to a single derived expression, and train the network on your gradients alone.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "backprop-ninja",
+      "title": "Become a backprop ninja",
+      "summary": "Take the network you built in Modules 3-4 and backpropagate through the whole thing by hand: twenty-six gradients, each one line, each checked against PyTorch's autograd the moment you write it. Then do it the ninja way - collapse cross-entropy's backward to one expression on paper, collapse BatchNorm's to another - and finish by training the network with autograd unplugged: no loss.backward() anywhere, just your gradients, reaching the val loss the framework would.",
+      "language": "python",
+      "estimatedMinutes": 150,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-backprop-ninja",
+      "learn": {
+        "outcomes": [
+          "Backprop by hand through the hand-rolled softmax and cross-entropy - the pluck, the log, the exp, the max - and see why dlogit_maxes must be zero",
+          "Derive matmul gradients by shape-matching instead of memorizing: dh = dlogits @ W2.T, dW2 = h.T @ dlogits, every time",
+          "Master the two rules behind every backward pass: broadcast forward means sum backward, used-twice forward means += backward",
+          "Walk BatchNorm's nine-step anatomy backwards - Bessel's correction, the eps, both gradient accumulations",
+          "Backprop the embedding lookup as a scatter-add, and watch db1 flatline at zero exactly as Module 4 predicted",
+          "Collapse cross-entropy's backward to one line on paper - softmax minus one-hot, over n - and BatchNorm's to one expression",
+          "Train the network with autograd unplugged: a loop with no loss.backward(), reaching val ~2.2 on your gradients alone"
+        ],
+        "concepts": [
+          "The chain rule at tensor scale",
+          "Matmul gradients",
+          "Broadcasting in reverse",
+          "Gradient accumulation",
+          "Softmax/cross-entropy backward",
+          "BatchNorm backward",
+          "Scatter-add",
+          "Numerical exactness",
+          "Manual optimization"
+        ],
+        "prerequisites": "Do Modules 3 and 4 first - this module backprops through that exact network, and the forward pass you get for free is the one you wrote there. Module 1's chain rule is the mental model throughout. PyTorch is the one install; the companion notebook is optional dessert."
+      },
+      "pitch": {
+        "body": "You've trusted loss.backward() for four modules. This project ends the trust: you backpropagate through the entire MLP-with-BatchNorm by hand - twenty-six gradients, each one line, each checked against PyTorch's own answer the moment you write it, most matching bit for bit. Two rules turn out to carry everything (broadcast forward = sum backward; used twice = add twice), the scariest layer collapses to nine one-liners, and cross-entropy's whole backward reduces on paper to softmax-minus-one-hot over n. The finale prints an exam table proving your seven parameter gradients against autograd, then trains the network with autograd unplugged - and the loss curve is indistinguishable from PyTorch's. After this, nothing in a neural network is a black box to you.",
+        "tutorIntro": "It won't derive the gradients for you. It asks which of the two rules applies, tells you to shape-match the matmul, and runs the checks - and it knows where this lecture bites: the keepdim sums, the double contributions, Bessel's n-1."
+      }
+    }
+  ]
+}

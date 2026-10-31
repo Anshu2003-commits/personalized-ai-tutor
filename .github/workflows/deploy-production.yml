@@ -1,0 +1,145 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - production
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web-app/package-lock.json
+
+      - name: Install web dependencies
+        working-directory: web-app
+        run: npm ci
+
+      - name: Lint web app
+        working-directory: web-app
+        run: npm run lint
+
+      - name: Set up Python for verifier scripts
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Verify code runner source assets
+        working-directory: web-app
+        run: |
+          npm run verify:python-source
+          npm run verify:boilerplate
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install LLM dependencies
+        run: python -m pip install -e ./llm-app
+
+      - name: Test LLM app
+        env:
+          PYTHONPATH: llm-app
+        run: python -m unittest discover -s llm-app/tests
+
+  deploy:
+    needs: checks
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+      - name: Validate secrets
+        env:
+          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          WEB_APP_ENV_PRODUCTION_B64: ${{ secrets.WEB_APP_ENV_PRODUCTION_B64 }}
+          LLM_APP_ENV_B64: ${{ secrets.LLM_APP_ENV_B64 }}
+        run: |
+          test -n "$PRODUCTION_SSH_HOST"
+          test -n "$PRODUCTION_SSH_USER"
+          test -n "$WEB_APP_ENV_PRODUCTION_B64"
+          test -n "$LLM_APP_ENV_B64"
+
+      - name: Write env files
+        env:
+          WEB_APP_ENV_PRODUCTION_B64: ${{ secrets.WEB_APP_ENV_PRODUCTION_B64 }}
+          LLM_APP_ENV_B64: ${{ secrets.LLM_APP_ENV_B64 }}
+        run: |
+          printf '%s' "$WEB_APP_ENV_PRODUCTION_B64" | base64 --decode > web-app/.env.production
+          printf '%s' "$LLM_APP_ENV_B64" | base64 --decode > llm-app/.env
+          {
+            grep -vE '^(NEXT_PUBLIC_SITE_URL|SITE_URL|DODO_PAYMENTS_RETURN_URL)=' web-app/.env.production || true
+            printf '\nNEXT_PUBLIC_SITE_URL=https://onlearn.app\n'
+            printf 'SITE_URL=https://onlearn.app\n'
+            printf 'DODO_PAYMENTS_RETURN_URL=https://onlearn.app/upgrade/success\n'
+          } > web-app/.env.production.tmp
+          mv web-app/.env.production.tmp web-app/.env.production
+
+      - name: Add host key
+        env:
+          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          PRODUCTION_SSH_PORT: ${{ secrets.PRODUCTION_SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${PRODUCTION_SSH_PORT:-22}" -H "$PRODUCTION_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync repo to VM
+        env:
+          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          PRODUCTION_SSH_PORT: ${{ secrets.PRODUCTION_SSH_PORT }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -p ${PRODUCTION_SSH_PORT:-22}" \
+            --exclude='.git/' \
+            --exclude='.local/' \
+            --exclude='_external/' \
+            --exclude='legacy/' \
+            --exclude='**/node_modules/' \
+            --exclude='**/.next/' \
+            --exclude='**/.venv/' \
+            --exclude='llm-app/.data/' \
+            --exclude='nginx/conf.d/' \
+            --exclude='web-app/.env.local' \
+            ./ "$PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST:~/onlearn-monorepo/"
+
+      - name: Deploy
+        env:
+          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          PRODUCTION_SSH_PORT: ${{ secrets.PRODUCTION_SSH_PORT }}
+        run: |
+          ssh -p "${PRODUCTION_SSH_PORT:-22}" "$PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST" '
+            set -e
+            cd ~/onlearn-monorepo
+            mkdir -p webroot
+            set -a
+            . web-app/.env.production
+            set +a
+            ENVIRONMENT=production docker compose build
+            ENVIRONMENT=production docker compose up -d --remove-orphans
+            docker compose ps
+          '

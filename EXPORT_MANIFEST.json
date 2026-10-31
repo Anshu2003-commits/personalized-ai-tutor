@@ -1,0 +1,29 @@
+{
+  "excluded_files": [
+    "config/asxix.env",
+    "config/master.env",
+    "config/production.env",
+    "config/staging.env",
+    "data/quarantine/intern-2026-06/ds/questions.json",
+    "data/quarantine/intern-2026-06/dsa/questions.json",
+    "legacy/llm-app/.env.dev",
+    "legacy/llm-app/.env.master",
+    "legacy/llm-app/.env.production",
+    "legacy/llm-app/.env.staging",
+    "legacy/web-app/.env.dev",
+    "legacy/web-app/.env.master",
+    "legacy/web-app/.env.production",
+    "legacy/web-app/.env.staging"
+  ],
+  "sanitized_files": [
+    "data/courses/dsa/questions.json",
+    "legacy/llm-app/scripts/inspect_mongo.py",
+    "legacy/llm-app/scripts/test_aget_state.py",
+    "legacy/web-app/app/data/questions.json"
+  ],
+  "included_current_uncommitted_changes": [
+    "web-app/app/api/user/progress/route.ts",
+    "web-app/hooks/use-progress.ts",
+    "web-app/lib/progress.ts"
+  ]
+}

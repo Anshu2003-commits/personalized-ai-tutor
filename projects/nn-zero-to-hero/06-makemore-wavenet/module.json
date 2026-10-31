@@ -1,0 +1,48 @@
+{
+  "slug": "06-makemore-wavenet",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 6,
+  "title": "Building makemore Part 5: Building a WaveNet",
+  "videoId": "t3YJ5hKiMQ0",
+  "videoUrl": "https://youtu.be/t3YJ5hKiMQ0",
+  "videoUploadDate": "2022-11-20",
+  "description": "Turn the Module 4 toolkit into a real architecture. Torch-ify the model into one Sequential object, stretch the context from 3 characters to 8, then rebuild the network as a WaveNet-style hierarchy that fuses characters two at a time - and hunt down a real bug that has been hiding in your own BatchNorm the whole time. The deepest network of the course trains to the best validation loss of the course.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "wavenet",
+      "title": "Build a WaveNet",
+      "summary": "Promote your Module 4 classes into a mini torch.nn with containers - Embedding, Flatten, Sequential - so the whole model is one object. Stretch the context window from 3 characters to 8, then change the wiring: instead of crushing all 8 into one vector, fuse them two at a time through three levels of your own FlattenConsecutive, the WaveNet idea in a single .view. Along the way, catch your own BatchNorm silently mis-normalizing 3D inputs - it trains fine, and it's wrong - and fix it. Finish by training a 76,579-parameter tree past every number of the course.",
+      "language": "python",
+      "estimatedMinutes": 120,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-makemore-wavenet",
+      "learn": {
+        "outcomes": [
+          "Torch-ify the stack: Embedding, Flatten, and Sequential modules with the real torch.nn API, so the model becomes one callable object",
+          "Scale the context window from 3 to 8 characters and articulate why a flat network spends it badly",
+          "Build FlattenConsecutive - the WaveNet's dilated fusion as one .view - and explain why fusing memory-adjacent neighbors is free",
+          "Assemble the hierarchical model and read its shape journey layer by layer: 8 characters, 4 pairs, 2 quadruples, 1 vector",
+          "Catch a silent bug in your own BatchNorm by reading a buffer's shape, and fix 3D normalization to pool over batch and position",
+          "Internalize the professional debugging habit this lecture teaches: everything can run, the loss can fall, and the model can still be wrong",
+          "Train the deepest network of the course to the best validation loss of the course - and know why the tree scales where the flat model stalls"
+        ],
+        "concepts": [
+          "Modules and containers",
+          "Hierarchical fusion",
+          "view/reshape semantics",
+          "BatchNorm over 3D inputs",
+          "Broadcasting-hidden bugs",
+          "Shape-driven debugging",
+          "Context scaling",
+          "Architecture as a scaling bet",
+          "Equal-budget comparisons"
+        ],
+        "prerequisites": "Do Module 4 first - this project starts from the very classes you wrote there (they ship in nn.py marked as yours), and one milestone is fixing a bug in one of them. Module 5 is great context but not required. PyTorch is the one install; the companion notebook is optional dessert."
+      },
+      "pitch": {
+        "body": "Every network you've built reads its context the same way: mash all the characters into one vector and hope a single layer sorts it out. This project changes the wiring. You promote your Module 4 classes into a mini torch.nn with real containers, stretch the context to 8 characters, and then fuse them the WaveNet way - pairs, then pairs of pairs, then pairs of those - a hierarchy that costs one .view to express. In the middle of it, the lecture's best moment happens to you: your own BatchNorm has been silently keeping four separate statistics where it should keep one, the network trains anyway, and a single printed shape gives it away. You fix the class you wrote two modules ago. The finale trains the deepest network of the course, 76,579 parameters, to the best validation number of the course in about five minutes - with a --long mode that runs the lecture's full 200,000 steps and pushes it to about 2.01.",
+        "tutorIntro": "It won't build the tree for you. It makes you narrate the shape journey out loud, asks how many examples a (32, 4, 68) batch really holds, and it will not spoil the bug - check.py opens the hunt, you close it."
+      }
+    }
+  ]
+}

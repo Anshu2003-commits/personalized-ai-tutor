@@ -1,0 +1,74 @@
+{
+  "slug": "01-micrograd",
+  "courseSlug": "nn-zero-to-hero",
+  "order": 1,
+  "title": "Building micrograd",
+  "videoId": "VMj-3S1tku0",
+  "videoUrl": "https://youtu.be/VMj-3S1tku0",
+  "videoUploadDate": "2022-08-16",
+  "description": "Build a tiny automatic-differentiation engine from scratch, the same idea behind PyTorch, then build and train a small neural network on top of it. Two guided projects: first the autograd engine, then the neural net + training loop.",
+  "projects": [
+    {
+      "order": 1,
+      "slug": "autograd-engine",
+      "title": "Build the autograd engine",
+      "summary": "Implement the Value class: a scalar that records its computation graph and runs backpropagation (backward()) to compute gradients automatically. Ends with a single neuron whose gradients are provably correct.",
+      "language": "python",
+      "estimatedMinutes": 60,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-autograd-engine",
+      "learn": {
+        "outcomes": [
+          "Implement a Value class that records every operation into a computation graph",
+          "Write the backward pass for reverse-mode autodiff so gradients fill in automatically",
+          "Derive and apply the chain rule by hand through +, *, and tanh",
+          "Check your gradients against numerical estimates, so you know they're correct",
+          "Wire it into a single neuron and watch the gradients flow end to end"
+        ],
+        "concepts": [
+          "Automatic differentiation",
+          "Computation graph",
+          "Backpropagation",
+          "Chain rule",
+          "Reverse-mode autodiff",
+          "Gradients"
+        ],
+        "prerequisites": "Comfortable writing Python classes. A faint memory of derivatives is plenty; you re-derive the chain rule here by building it."
+      },
+      "pitch": {
+        "body": "A working autodiff engine, built from scratch. By the end, a real trainable neuron whose gradients you can prove are correct, using the same machinery PyTorch runs at scale.",
+        "tutorIntro": "It won't hand you the answer. It asks the one question that makes the next line obvious, then checks your work by running the tests."
+      }
+    },
+    {
+      "order": 2,
+      "slug": "neural-net-training",
+      "title": "Build & train a neural net",
+      "summary": "On top of the engine, build Neuron / Layer / MLP and a gradient-descent training loop. Train a tiny network until the loss drops; you just trained a neural net from scratch.",
+      "language": "python",
+      "estimatedMinutes": 60,
+      "repoUrl": "https://github.com/ash25082003/onlearn-zero-to-hero-neural-net-training",
+      "learn": {
+        "outcomes": [
+          "Build Neuron, Layer, and MLP classes on top of your autograd engine",
+          "Write a gradient-descent training loop from scratch",
+          "Compute a loss, backpropagate it, and nudge every weight toward a better answer",
+          "Train the network until the loss visibly drops",
+          "See exactly what a forward pass, backward pass, and weight update really are"
+        ],
+        "concepts": [
+          "Neural networks",
+          "Multi-layer perceptron",
+          "Gradient descent",
+          "Loss functions",
+          "Forward and backward pass",
+          "Training loop"
+        ],
+        "prerequisites": "Do the autograd engine first. This builds directly on the Value class you wrote there."
+      },
+      "pitch": {
+        "body": "On top of your autograd engine, build Neuron, Layer, and MLP, then write the gradient-descent loop that trains them. Watch the loss fall; that's your network learning, weight by weight.",
+        "tutorIntro": "It won't write the loop for you. It asks the question that makes the next line obvious, then runs the tests to check."
+      }
+    }
+  ]
+}
